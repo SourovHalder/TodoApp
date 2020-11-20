@@ -14,7 +14,8 @@ class TodoController extends Controller
      */
     public function index()
     {
-        return view('welcome');
+        $todos=Todo::latest()->get();
+        return view('welcome')->with('todos',$todos);
     }
 
     /**
@@ -35,7 +36,16 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //validating data
+        $validatedData = $request->validate([
+            'title' => 'required|max:255',
+        ]);
+        //storing the data
+        $todo = Todo::create([
+            'title' => $request->title,
+            'completed' => 0,
+        ]);
+        return redirect('/');
     }
 
     /**
@@ -57,7 +67,7 @@ class TodoController extends Controller
      */
     public function edit(todo $todo)
     {
-        //
+        return view('todo.edit')->with('todo',$todo);
     }
 
     /**
@@ -69,7 +79,8 @@ class TodoController extends Controller
      */
     public function update(Request $request, todo $todo)
     {
-        //
+        $todo->update($request->all());
+        return redirect('/');
     }
 
     /**
@@ -80,6 +91,7 @@ class TodoController extends Controller
      */
     public function destroy(todo $todo)
     {
-        //
+     $todo->delete();
+     return redirect('/');
     }
 }
